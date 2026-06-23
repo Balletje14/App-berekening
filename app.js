@@ -1606,11 +1606,3 @@ window.addEventListener(
 console.log(
     "Boeket Calculator v1.0 geladen"
 );
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(reg => console.log('Service worker registered'))
-      .catch(err => console.log('Service worker error', err));
-  });
-}
