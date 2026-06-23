@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Boeket Calculator</title>
+
+<link rel="manifest"
+      href="manifest.json">
+
+<meta name="theme-color"
+      content="#4CAF50">
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    margin:20px;
+    background:#f8f8f8;
+}
+
+h1{
+    color:#2e7d32;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+input[type=text]{
+    padding:8px;
+    width:300px;
+}
+
+input[type=number]{
+    width:70px;
+    padding:4px;
+}
+
+button{
+    padding:8px 12px;
+    margin:4px;
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th{
+    background:#4CAF50;
+    color:white;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:8px;
+}
+
+#resultaat table{
+    width:400px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🌷 Boeket Calculator</h1>
+
+<div class="card">
+
+<h2>Bloemenbestand laden</h2>
+
+<input
+    type="file"
+    id="excelFile"
+    accept=".xlsx,.xls">
+
+</div>
+
+<div class="card">
+
+<h2>Boeket</h2>
+
+<input
+    type="text"
+    id="boeketNaam"
+    placeholder="Naam van het boeket">
+
+<br><br>
+
+<select id="opgeslagenBoeketten">
+
+    <option value="">
+        Kies opgeslagen boeket
+    </option>
+
+</select>
+
+<button onclick="laadBoeket()">
+    Open
+</button>
+
+<button onclick="opslaanBoeket()">
+    Opslaan
+</button>
+
+<button onclick="hernoemBoeket()">
+    Hernoemen
+</button>
+
+<button onclick="verwijderBoeket()">
+    Verwijderen
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Zoeken</h2>
+
+<input
+    type="text"
+    id="zoek"
+    placeholder="Zoek op artikelnummer of naam">
+
+</div>
+
+<div class="card">
+
+<h2>Bloemen</h2>
+
+<div id="bloemen"></div>
+
+</div>
+
+<div class="card">
+
+<h2>Acties</h2>
+
+<button onclick="bereken()">
+    Bereken
+</button>
+
+<button onclick="nieuwBoeket()">
+    Nieuw boeket
+</button>
+
+<button onclick="allesLeegmaken()">
+    Alles leegmaken
+</button>
+
+<button onclick="exportExcel()">
+    Excel export
+</button>
+
+<button onclick="maakPDF()">
+    PDF export
+</button>
+
+<button onclick="resetApp()">
+    Reset App
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Samenvatting</h2>
+
+<div id="resultaat"></div>
+
+</div>
+
+<div class="card">
+
+<h2>Boeket Overzicht</h2>
+
+<div id="boeketOverzicht"></div>
+
+</div>
+
+<!-- SheetJS -->
+
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<!-- jsPDF -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- AutoTable -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<!-- Eigen code -->
+
+<script src="app.js"></script>
+
+</body>
+
+</html>
