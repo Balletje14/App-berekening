@@ -40,12 +40,6 @@ document
     leesExcel
 );
 
-document
-.getElementById("zoek")
-.addEventListener(
-    "input",
-    filterBloemen
-);
 
 // ===============================
 // EXCEL INLEZEN
@@ -113,39 +107,50 @@ function leesExcel(event) {
 
 function filterBloemen() {
 
+    const zoekElement =
+        document.getElementById("zoekveld");
+
+    if (!zoekElement) {
+        return;
+    }
+
     const zoekterm =
-        document
-        .getElementById("zoek")
-        .value
-        .toLowerCase();
+        zoekElement.value
+        .toLowerCase()
+        .trim();
+
+    if (!zoekterm) {
+        toonBloemen(bloemen);
+        return;
+    }
 
     const gefilterd =
-        bloemen.filter(b => {
+        bloemen.filter(b =>
 
-            const artikel =
-                String(
-                    b.Artikelnummer || ""
-                ).toLowerCase();
+            (b.Naam || "")
+                .toLowerCase()
+                .includes(zoekterm)
 
-            const naam =
-                String(
-                    b.Naam || ""
-                ).toLowerCase();
+            ||
 
-            return (
-                artikel.includes(
-                    zoekterm
-                ) ||
-                naam.includes(
-                    zoekterm
-                )
-            );
+            (b.Artikelnummer || "")
+                .toLowerCase()
+                .includes(zoekterm)
 
-        });
+        );
 
-    toonBloemen(
-        gefilterd
-    );
+    toonBloemen(gefilterd);
+
+}
+
+function leegZoekveld() {
+
+    document
+        .getElementById("zoekveld")
+        .value = "";
+
+    filterBloemen();
+
 }
 
 // ===============================
@@ -157,15 +162,23 @@ function bewaarAantal(
     waarde
 ) {
 
-    aantallen[
-        artikelnummer
-    ] =
-    parseInt(
-        waarde
-    ) || 0;
+    aantallen[artikelnummer] =
+        parseInt(waarde) || 0;
 
-    huidigBoeketGewijzigd =
-        true;
+    huidigBoeketGewijzigd = true;
+
+    const zoekterm =
+        document
+        .getElementById("zoekveld")
+        .value
+        .trim();
+
+    if (zoekterm) {
+        filterBloemen();
+    } else {
+        toonBloemen(bloemen);
+    }
+
 }
 
 // ===============================
@@ -176,17 +189,147 @@ function toonBloemen(
     lijst = bloemen
 ) {
 
+    let totaalSoorten = 0;
+    let totaalStelen = 0;
+
+    let totaalInkoop = 0;
+    let totaalVerkoop = 0;
+    let totaalBTW = 0;
+
+    bloemen.forEach(b => {
+
+        const aantal =
+            aantallen[
+                b.Artikelnummer
+            ] || 0;
+
+        if (aantal > 0) {
+
+            totaalSoorten++;
+            totaalStelen += aantal;
+
+            const inkoopPrijs =
+                Number(
+                    b["Inkoopprijs"] ??
+                    b[" Inkoopprijs "] ??
+                    0
+                );
+
+            const verkoopPrijs =
+                Number(
+                    b["Verkoopprijs"] ??
+                    b[" Verkoopprijs "] ??
+                    0
+                );
+
+            const btwPrijs =
+                Number(
+                    b["BTW"] ??
+                    b["Btw"] ??
+                    b[" Btw "] ??
+                    0
+                );
+
+            totaalInkoop +=
+                aantal * inkoopPrijs;
+
+            totaalVerkoop +=
+                aantal * verkoopPrijs;
+
+            totaalBTW +=
+                aantal * btwPrijs;
+
+        }
+
+    });
+
     let html = `
+
+    <div style="
+        margin-bottom:15px;
+        padding:15px;
+        background:#f5f5f5;
+        border-radius:8px;
+        border:1px solid #ddd;
+    ">
+
+        <div>
+            <strong>Geselecteerde soorten:</strong>
+            ${totaalSoorten}
+        </div>
+
+        <div>
+            <strong>Totaal stelen:</strong>
+            ${totaalStelen}
+        </div>
+
+        <hr>
+
+        <div>
+            <strong>Inkoopwaarde:</strong>
+            € ${totaalInkoop.toFixed(2)}
+        </div>
+
+        <div>
+            <strong>Verkoop excl. BTW:</strong>
+            € ${totaalVerkoop.toFixed(2)}
+        </div>
+
+        <div>
+            <strong>BTW:</strong>
+            € ${totaalBTW.toFixed(2)}
+        </div>
+
+        <div>
+            <strong>Verkoop incl. BTW:</strong>
+            € ${(totaalVerkoop + totaalBTW).toFixed(2)}
+        </div>
+
+    </div>
+
     <table>
 
         <tr>
+
             <th>Artikel</th>
+
             <th>Naam</th>
+
+            <th>Inkoop p/st</th>
+
+            <th>Verkoop p/st</th>
+
+            <th>BTW p/st</th>
+
             <th>Aantal</th>
+
         </tr>
+
     `;
 
     lijst.forEach(b => {
+
+        const inkoopPrijs =
+            Number(
+                b["Inkoopprijs"] ??
+                b[" Inkoopprijs "] ??
+                0
+            );
+
+        const verkoopPrijs =
+            Number(
+                b["Verkoopprijs"] ??
+                b[" Verkoopprijs "] ??
+                0
+            );
+
+        const btwPrijs =
+            Number(
+                b["BTW"] ??
+                b["Btw"] ??
+                b[" Btw "] ??
+                0
+            );
 
         html += `
 
@@ -201,26 +344,38 @@ function toonBloemen(
             </td>
 
             <td>
-
-                <input
-                    type="number"
-                    min="0"
-
-                    value="${
-                        aantallen[
-                            b.Artikelnummer
-                        ] || 0
-                    }"
-
-                    onchange="
-                    bewaarAantal(
-                    '${b.Artikelnummer}',
-                    this.value
-                    )
-                    "
-                >
-
+                € ${inkoopPrijs.toFixed(2)}
             </td>
+
+            <td>
+                € ${verkoopPrijs.toFixed(2)}
+            </td>
+
+            <td>
+                € ${btwPrijs.toFixed(2)}
+            </td>
+
+            <td>
+
+    <input
+        type="number"
+        min="0"
+
+        value="${
+            aantallen[
+                b.Artikelnummer
+            ] || 0
+        }"
+
+        oninput="
+            bewaarAantal(
+                '${b.Artikelnummer}',
+                this.value
+            );
+        "
+    >
+
+</td>
 
         </tr>
 
@@ -233,11 +388,11 @@ function toonBloemen(
     `;
 
     document
-    .getElementById(
-        "bloemen"
-    )
-    .innerHTML =
-    html;
+        .getElementById(
+            "bloemen"
+        )
+        .innerHTML =
+        html;
 }
 // ===============================
 // BEREKEN BOEKET
