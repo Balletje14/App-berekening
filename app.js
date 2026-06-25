@@ -108,7 +108,9 @@ function leesExcel(event) {
 function filterBloemen() {
 
     const zoekElement =
-        document.getElementById("zoekveld");
+        document.getElementById(
+            "zoekveld"
+        );
 
     if (!zoekElement) {
         return;
@@ -119,37 +121,77 @@ function filterBloemen() {
         .toLowerCase()
         .trim();
 
-    if (!zoekterm) {
-        toonBloemen(bloemen);
-        return;
+    let lijst =
+        bloemen;
+
+    if (zoekterm !== "") {
+
+        lijst =
+            bloemen.filter(b => {
+
+                const naam =
+                    String(
+                        b.Naam || ""
+                    ).toLowerCase();
+
+                const artikel =
+                    String(
+                        b.Artikelnummer || ""
+                    ).toLowerCase();
+
+                return (
+                    naam.includes(
+                        zoekterm
+                    )
+                    ||
+                    artikel.includes(
+                        zoekterm
+                    )
+                );
+
+            });
+
     }
 
-    const gefilterd =
-        bloemen.filter(b =>
-
-            (b.Naam || "")
-                .toLowerCase()
-                .includes(zoekterm)
-
-            ||
-
-            (b.Artikelnummer || "")
-                .toLowerCase()
-                .includes(zoekterm)
-
-        );
-
-    toonBloemen(gefilterd);
+    toonBloemen(
+        lijst
+    );
 
 }
 
 function leegZoekveld() {
 
-    document
-        .getElementById("zoekveld")
-        .value = "";
+    const zoekveld =
+        document.getElementById(
+            "zoekveld"
+        );
 
-    filterBloemen();
+    if (!zoekveld)
+        return;
+
+    zoekveld.value = "";
+
+    toonBloemen(
+        bloemen
+    );
+
+}
+
+// ===============================
+// ENTER = TOETSENBORD SLUITEN
+// ===============================
+
+function zoekEnter(event) {
+
+    if (
+        event.key === "Enter"
+    ) {
+
+        filterBloemen();
+
+        event.target.blur();
+
+    }
 
 }
 
@@ -162,22 +204,17 @@ function bewaarAantal(
     waarde
 ) {
 
-    aantallen[artikelnummer] =
-        parseInt(waarde) || 0;
+    aantallen[
+        artikelnummer
+    ] =
+        parseInt(
+            waarde
+        ) || 0;
 
-    huidigBoeketGewijzigd = true;
+    huidigBoeketGewijzigd =
+        true;
 
-    const zoekterm =
-        document
-        .getElementById("zoekveld")
-        .value
-        .trim();
-
-    if (zoekterm) {
-        filterBloemen();
-    } else {
-        toonBloemen(bloemen);
-    }
+    herberekenAutomatisch();
 
 }
 
@@ -727,7 +764,7 @@ function nieuwBoeket() {
         .value = "";
 
     document
-        .getElementById("zoek")
+        .getElementById("zoekveld")
         .value = "";
 
     document
