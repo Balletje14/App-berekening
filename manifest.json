@@ -1,6 +1,6 @@
 {
   "name": "Mijn Bloemen App",
-  "short_name": "Bloemen",
+  "short_name": "Boeketkosten",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
