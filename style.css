@@ -3,6 +3,8 @@ body {
     margin: 20px;
 }
 
+
+
 h1 {
     color: #53181f;
 }
@@ -56,11 +58,4 @@ img {
 
 .zoek-container button {
     white-space: nowrap;
-}
-
-.logo {
-    width: 120px;
-    height: auto;
-    display: block;
-    margin: 20px auto 10px auto;
 }
