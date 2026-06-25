@@ -387,24 +387,25 @@ lijst.forEach(b => {
 
             <td>
 
-    <input
-        type="number"
-        min="0"
-        enterkeyhint="done"
+   <input
+    type="number"
+    min="0"
 
-        value="${
-    aantallen[
-        sleutel
-    ] || 0
-}"
+    value="${aantallen[sleutel] || 0}"
 
-        oninput="
-            bewaarAantal(
-    '${sleutel}',
-                this.value
-            );
-        "
-    >
+    oninput="
+        bewaarAantal(
+            '${sleutel}',
+            this.value
+        );
+    "
+
+    onkeydown="
+        if(event.key === 'Enter'){
+            this.blur();
+        }
+    "
+>
 
 </td>
 
