@@ -57,3 +57,10 @@ img {
 .zoek-container button {
     white-space: nowrap;
 }
+
+.logo {
+    width: 120px;
+    height: auto;
+    display: block;
+    margin: 20px auto 10px auto;
+}
