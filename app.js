@@ -33,12 +33,23 @@ window.onload = function () {
 // EVENTS
 // ===============================
 
-document
-.getElementById("excelFile")
-.addEventListener(
-    "change",
-    leesExcel
-);
+window.addEventListener("load", () => {
+
+    const excelFile =
+        document.getElementById(
+            "excelFile"
+        );
+
+    if (excelFile) {
+
+        excelFile.addEventListener(
+            "change",
+            leesExcel
+        );
+
+    }
+
+});
 
 
 // ===============================
@@ -204,17 +215,28 @@ function bewaarAantal(
     waarde
 ) {
 
-    aantallen[
-        artikelnummer
-    ] =
-        parseInt(
-            waarde
-        ) || 0;
+    aantallen[artikelnummer] =
+        parseInt(waarde) || 0;
 
-    huidigBoeketGewijzigd =
-        true;
+    huidigBoeketGewijzigd = true;
 
-    herberekenAutomatisch();
+    // Alleen bovenste overzicht verversen
+    const zoekterm =
+        document
+        .getElementById("zoekveld")
+        ?.value
+        .trim()
+        || "";
+
+    if (zoekterm !== "") {
+
+        filterBloemen();
+
+    } else {
+
+        toonBloemen();
+
+    }
 
 }
 
@@ -229,28 +251,25 @@ function toonBloemen(
     let totaalSoorten = 0;
     let totaalStelen = 0;
 
-    let totaalInkoop = 0;
     let totaalVerkoop = 0;
     let totaalBTW = 0;
 
-    bloemen.forEach(b => {
+bloemen.forEach(b => {
 
-        const aantal =
-            aantallen[
-                b.Artikelnummer
-            ] || 0;
+    const sleutel =
+    String(b.Artikelnummer || "").trim()
+    ||
+    String(b.Naam || "").trim();
+
+    const aantal =
+        aantallen[
+            sleutel
+        ] || 0;
 
         if (aantal > 0) {
 
             totaalSoorten++;
             totaalStelen += aantal;
-
-            const inkoopPrijs =
-                Number(
-                    b["Inkoopprijs"] ??
-                    b[" Inkoopprijs "] ??
-                    0
-                );
 
             const verkoopPrijs =
                 Number(
@@ -260,15 +279,7 @@ function toonBloemen(
                 );
 
             const btwPrijs =
-                Number(
-                    b["BTW"] ??
-                    b["Btw"] ??
-                    b[" Btw "] ??
-                    0
-                );
-
-            totaalInkoop +=
-                aantal * inkoopPrijs;
+    verkoopPrijs * 0.21;
 
             totaalVerkoop +=
                 aantal * verkoopPrijs;
@@ -302,12 +313,7 @@ function toonBloemen(
 
         <hr>
 
-        <div>
-            <strong>Inkoopwaarde:</strong>
-            € ${totaalInkoop.toFixed(2)}
-        </div>
-
-        <div>
+         <div>
             <strong>Verkoop excl. BTW:</strong>
             € ${totaalVerkoop.toFixed(2)}
         </div>
@@ -332,8 +338,6 @@ function toonBloemen(
 
             <th>Naam</th>
 
-            <th>Inkoop p/st</th>
-
             <th>Verkoop p/st</th>
 
             <th>BTW p/st</th>
@@ -344,29 +348,22 @@ function toonBloemen(
 
     `;
 
-    lijst.forEach(b => {
+lijst.forEach(b => {
 
-        const inkoopPrijs =
-            Number(
-                b["Inkoopprijs"] ??
-                b[" Inkoopprijs "] ??
-                0
-            );
+    const sleutel =
+    String(b.Artikelnummer || "").trim()
+    ||
+    String(b.Naam || "").trim();
 
         const verkoopPrijs =
-            Number(
-                b["Verkoopprijs"] ??
-                b[" Verkoopprijs "] ??
-                0
-            );
+    Number(
+        b["Verkoopprijs"] ??
+        b[" Verkoopprijs "] ??
+        0
+    );
 
         const btwPrijs =
-            Number(
-                b["BTW"] ??
-                b["Btw"] ??
-                b[" Btw "] ??
-                0
-            );
+    verkoopPrijs * 0.21;
 
         html += `
 
@@ -378,10 +375,6 @@ function toonBloemen(
 
             <td>
                 ${b.Naam || ""}
-            </td>
-
-            <td>
-                € ${inkoopPrijs.toFixed(2)}
             </td>
 
             <td>
@@ -399,14 +392,14 @@ function toonBloemen(
         min="0"
 
         value="${
-            aantallen[
-                b.Artikelnummer
-            ] || 0
-        }"
+    aantallen[
+        sleutel
+    ] || 0
+}"
 
         oninput="
             bewaarAantal(
-                '${b.Artikelnummer}',
+    '${sleutel}',
                 this.value
             );
         "
@@ -437,7 +430,6 @@ function toonBloemen(
 
 function bereken() {
 
-    let totaalInkoop = 0;
     let totaalVerkoop = 0;
     let totaalBTW = 0;
 
@@ -448,7 +440,6 @@ function bereken() {
             <th>Artikel</th>
             <th>Naam</th>
             <th>Aantal</th>
-            <th>Inkoop</th>
             <th>Verkoop</th>
             <th>BTW</th>
         </tr>
@@ -456,20 +447,18 @@ function bereken() {
 
     bloemen.forEach(b => {
 
-        const aantal =
-            aantallen[
-                b.Artikelnummer
-            ] || 0;
+const sleutel =
+    String(b.Artikelnummer || "").trim()
+    ||
+    String(b.Naam || "").trim();
+
+const aantal =
+    aantallen[
+        sleutel
+    ] || 0;
 
         if (aantal === 0)
             return;
-
-        const inkoopPrijs =
-            Number(
-                b["Inkoopprijs"] ??
-                b[" Inkoopprijs "] ??
-                0
-            );
 
         const verkoopPrijs =
             Number(
@@ -479,16 +468,7 @@ function bereken() {
             );
 
         const btwPrijs =
-            Number(
-                b["BTW"] ??
-                b["Btw"] ??
-                b[" Btw "] ??
-                0
-            );
-
-        const regelInkoop =
-            aantal *
-            inkoopPrijs;
+    verkoopPrijs * 0.21;
 
         const regelVerkoop =
             aantal *
@@ -497,9 +477,6 @@ function bereken() {
         const regelBTW =
             aantal *
             btwPrijs;
-
-        totaalInkoop +=
-            regelInkoop;
 
         totaalVerkoop +=
             regelVerkoop;
@@ -521,10 +498,6 @@ function bereken() {
 
             <td>
                 ${aantal}
-            </td>
-
-            <td>
-                € ${regelInkoop.toFixed(2)}
             </td>
 
             <td>
@@ -565,16 +538,6 @@ function bereken() {
     <h2>Totalen Boeket</h2>
 
     <table>
-
-        <tr>
-            <td>
-                Inkoop excl. BTW
-            </td>
-
-            <td>
-                € ${totaalInkoop.toFixed(2)}
-            </td>
-        </tr>
 
         <tr>
             <td>
@@ -620,26 +583,23 @@ function bereken() {
 
 function berekenTotalen() {
 
-    let totaalInkoop = 0;
     let totaalVerkoop = 0;
     let totaalBTW = 0;
 
     bloemen.forEach(b => {
 
-        const aantal =
-            aantallen[
-                b.Artikelnummer
-            ] || 0;
+const sleutel =
+    String(b.Artikelnummer || "").trim()
+    ||
+    String(b.Naam || "").trim();
+
+const aantal =
+    aantallen[
+        sleutel
+    ] || 0;
 
         if (aantal === 0)
             return;
-
-        const inkoopPrijs =
-            Number(
-                b["Inkoopprijs"] ??
-                b[" Inkoopprijs "] ??
-                0
-            );
 
         const verkoopPrijs =
             Number(
@@ -649,16 +609,7 @@ function berekenTotalen() {
             );
 
         const btwPrijs =
-            Number(
-                b["BTW"] ??
-                b["Btw"] ??
-                b[" Btw "] ??
-                0
-            );
-
-        totaalInkoop +=
-            aantal *
-            inkoopPrijs;
+    verkoopPrijs * 0.21;
 
         totaalVerkoop +=
             aantal *
@@ -672,7 +623,6 @@ function berekenTotalen() {
 
     return {
 
-        totaalInkoop,
         totaalVerkoop,
         totaalBTW,
 
@@ -693,10 +643,15 @@ function geselecteerdeBloemen() {
 
     bloemen.forEach(b => {
 
-        const aantal =
-            aantallen[
-                b.Artikelnummer
-            ] || 0;
+const sleutel =
+    String(b.Artikelnummer || "").trim()
+    ||
+    String(b.Naam || "").trim();
+
+const aantal =
+    aantallen[
+        sleutel
+    ] || 0;
 
         if (aantal > 0) {
 
@@ -711,13 +666,6 @@ function geselecteerdeBloemen() {
                 Aantal:
                     aantal,
 
-                Inkoopprijs:
-                    Number(
-                        b["Inkoopprijs"] ??
-                        b[" Inkoopprijs "] ??
-                        0
-                    ),
-
                 Verkoopprijs:
                     Number(
                         b["Verkoopprijs"] ??
@@ -726,12 +674,11 @@ function geselecteerdeBloemen() {
                     ),
 
                 BTW:
-                    Number(
-                        b["BTW"] ??
-                        b["Btw"] ??
-                        b[" Btw "] ??
-                        0
-                    )
+    Number(
+        b["Verkoopprijs"] ??
+        b[" Verkoopprijs "] ??
+        0
+    ) * 0.21
 
             });
 
@@ -1200,12 +1147,6 @@ async function maakPDF() {
 
             "€ " +
             (
-                item.Inkoopprijs *
-                item.Aantal
-            ).toFixed(2),
-
-            "€ " +
-            (
                 item.Verkoopprijs *
                 item.Aantal
             ).toFixed(2),
@@ -1231,8 +1172,6 @@ async function maakPDF() {
             "Naam",
 
             "Aantal",
-
-            "Inkoop",
 
             "Verkoop",
 
@@ -1271,20 +1210,6 @@ async function maakPDF() {
             .finalY + 15;
 
     doc.setFontSize(12);
-
-    doc.text(
-
-        "Totaal Inkoop excl. BTW: € " +
-        totalen.totaalInkoop
-            .toFixed(2),
-
-        14,
-
-        y
-
-    );
-
-    y += 8;
 
     doc.text(
 
@@ -1409,13 +1334,9 @@ function exportExcel() {
 
         "Aantal",
 
-        "Inkoopprijs",
-
         "Verkoopprijs",
 
         "BTW p/st",
-
-        "Totaal Inkoop",
 
         "Totaal Verkoop",
 
@@ -1428,10 +1349,6 @@ function exportExcel() {
     // ===========================
 
     geselecteerd.forEach(item => {
-
-        const totaalInkoop =
-            item.Inkoopprijs *
-            item.Aantal;
 
         const totaalVerkoop =
             item.Verkoopprijs *
@@ -1449,13 +1366,9 @@ function exportExcel() {
 
             item.Aantal,
 
-            item.Inkoopprijs,
-
             item.Verkoopprijs,
 
             item.BTW,
-
-            totaalInkoop,
 
             totaalVerkoop,
 
@@ -1482,7 +1395,6 @@ function exportExcel() {
         "",
         "",
         "",
-        totalen.totaalInkoop,
         totalen.totaalVerkoop,
         totalen.totaalBTW
     ]);
@@ -1748,48 +1660,48 @@ function herberekenAutomatisch() {
 // MUTATION OBSERVER
 // ===============================
 
-const observer =
-    new MutationObserver(
-        () => {
+// const observer =
+//    new MutationObserver(
+//        () => {
 
-            try {
+//            try {
 
-                herberekenAutomatisch();
+//                herberekenAutomatisch();
 
-            }
+//              }
 
-            catch {
+//            catch {
 
-            }
+//            }
 
-        }
-    );
+//        }
+//    );
 
-window.addEventListener(
-    "load",
-    () => {
+// window.addEventListener(
+//    "load",
+//    () => {
 
-        const container =
-            document.getElementById(
-                "bloemen"
-            );
+//        const container =
+//            document.getElementById(
+//                "bloemen"
+//            );
 
-        if (
-            container
-        ) {
+//        if (
+//            container
+//        ) {
 
-            observer.observe(
-                container,
-                {
-                    childList: true,
-                    subtree: true
-                }
-            );
+//            observer.observe(
+//                container,
+//                {
+//                    childList: true,
+//                    subtree: true
+//                }
+//            );
 
-        }
+//        }
 
-    }
-);
+//    }
+//);
 
 // ===============================
 // VERSIE
