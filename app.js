@@ -390,6 +390,7 @@ lijst.forEach(b => {
     <input
         type="number"
         min="0"
+        enterkeyhint="done"
 
         value="${
     aantallen[
