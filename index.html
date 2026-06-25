@@ -17,7 +17,7 @@
       href="manifest.json">
 
 <meta name="theme-color"
-      content="#4CAF50">
+      content="#53181f">
 
 <style>
 
@@ -28,7 +28,7 @@ body{
 }
 
 h1{
-    color:#2e7d32;
+    color:#53181f;
 }
 
 .card{
@@ -62,7 +62,7 @@ table{
 }
 
 th{
-    background:#4CAF50;
+    background:#53181f;
     color:white;
 }
 
@@ -81,16 +81,37 @@ th,td{
 
 <body>
 
-<h1>🌷 Boeket Calculator</h1>
+<h1>Boeket Calculator</h1>
 
 <div class="card">
 
-<h2>Bloemenbestand laden</h2>
+<h2>Zoeken</h2>
 
-<input
-    type="file"
-    id="excelFile"
-    accept=".xlsx,.xls">
+<div class="zoek-container">
+
+    <input
+        type="text"
+        id="zoekveld"
+        placeholder="Zoek bloem..."
+        oninput="filterBloemen()"
+    >
+
+    <button
+        type="button"
+        onclick="leegZoekveld()"
+    >
+        Wis
+    </button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Bloemen</h2>
+
+<div id="bloemen"></div>
 
 </div>
 
@@ -128,25 +149,6 @@ th,td{
 <button onclick="verwijderBoeket()">
     Verwijderen
 </button>
-
-</div>
-
-<div class="card">
-
-<h2>Zoeken</h2>
-
-<input
-    type="text"
-    id="zoek"
-    placeholder="Zoek op artikelnummer of naam">
-
-</div>
-
-<div class="card">
-
-<h2>Bloemen</h2>
-
-<div id="bloemen"></div>
 
 </div>
 
@@ -193,6 +195,17 @@ th,td{
 <h2>Boeket Overzicht</h2>
 
 <div id="boeketOverzicht"></div>
+
+</div>
+
+<div class="card">
+
+<h2>Bloemenbestand laden</h2>
+
+<input
+    type="file"
+    id="excelFile"
+    accept=".xlsx,.xls">
 
 </div>
 
