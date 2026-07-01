@@ -206,6 +206,14 @@ function zoekEnter(event) {
 
 }
 
+function boeketNaamEnter(event) {
+
+    if (event.key === "Enter") {
+        event.target.blur();
+    }
+
+}
+
 // ===============================
 // AANTAL OPSLAAN
 // ===============================
@@ -387,25 +395,23 @@ lijst.forEach(b => {
 
             <td>
 
-   <input
-    type="number"
-    min="0"
+    <input
+        type="number"
+        min="0"
 
-    value="${aantallen[sleutel] || 0}"
+        value="${
+    aantallen[
+        sleutel
+    ] || 0
+}"
 
-    oninput="
-        bewaarAantal(
-            '${sleutel}',
-            this.value
-        );
-    "
-
-    onkeydown="
-        if(event.key === 'Enter'){
-            this.blur();
-        }
-    "
->
+        oninput="
+            bewaarAantal(
+    '${sleutel}',
+                this.value
+            );
+        "
+    >
 
 </td>
 
@@ -743,19 +749,31 @@ function allesLeegmaken() {
 
         aantallen = {};
 
-        document
-            .getElementById(
-                "resultaat"
-            )
-            .innerHTML = "";
+document
+    .getElementById(
+        "resultaat"
+    )
+    .innerHTML = "";
 
-        document
-            .getElementById(
-                "boeketOverzicht"
-            )
-            .innerHTML = "";
+document
+    .getElementById(
+        "boeketOverzicht"
+    )
+    .innerHTML = "";
 
-        toonBloemen();
+document
+    .getElementById(
+        "boeketNaam"
+    )
+    .value = "";
+
+document
+    .getElementById(
+        "zoekveld"
+    )
+    .value = "";
+
+toonBloemen();
 
     }
 
@@ -1704,6 +1722,31 @@ function herberekenAutomatisch() {
 
 //    }
 //);
+
+// ===============================
+// TOETSENBORD SLUITEN BIJ KLIK BUITEN INVELDVAK
+// ===============================
+
+document.addEventListener("click", function (event) {
+
+    const actiefElement = document.activeElement;
+
+if (
+    actiefElement &&
+    (
+        actiefElement.id === "zoekveld" ||
+        actiefElement.id === "boeketNaam" ||
+        actiefElement.type === "number"
+    )
+) {
+
+    if (event.target !== actiefElement) {
+        actiefElement.blur();
+    }
+
+}
+
+});
 
 // ===============================
 // VERSIE
